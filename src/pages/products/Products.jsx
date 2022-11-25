@@ -1,4 +1,8 @@
+import { useQuery } from "@apollo/react-hooks";
 import React, { Component } from "react";
+import { Query } from "react-apollo";
+import { GetAllProducts } from "../../apollo/product/hooks";
+import { get_all_products } from "../../apollo/product/query";
 import CommonTable from "../../components/common/Table";
 import Layout from "../../components/Layout/Layout";
 import products from "../../dummy-data/products.json";
@@ -8,6 +12,9 @@ class Products extends Component {
     super(props);
     this.state = {
       products: products,
+      limit: 10,
+      page: 0,
+      filter: "",
     };
   }
   column = [
@@ -15,6 +22,11 @@ class Products extends Component {
       title: "Id",
       dataIndex: "name",
       key: "id",
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
     },
     {
       title: "Image",
@@ -42,11 +54,6 @@ class Products extends Component {
       key: "category",
     },
     {
-      title: "Brand",
-      dataIndex: "brand",
-      key: "brand",
-    },
-    {
       title: "Sell",
       dataIndex: "sell",
       key: "sell",
@@ -71,7 +78,28 @@ class Products extends Component {
   render() {
     return (
       <Layout>
-        <CommonTable data={this.state.products} column={this.column} title={"Products List"}/>
+        <Query
+          query={get_all_products}
+          variables={{
+            limit: this.state.limit,
+            page: this.state.page,
+            filter: this.state.filter,
+          }}
+          notifyOnNetworkStatusChange
+        >
+          {({ loading, error, data, refetch, networkStatus }) => {
+            // if (networkStatus === 4) return "Refetching!";
+            if (loading) return null;
+            if (error) return `Error! ${error}`;
+            return (
+              <CommonTable
+                data={data.getAllProducts}
+                column={this.column}
+                title={"Products List"}
+              />
+            );
+          }}
+        </Query>
       </Layout>
     );
   }

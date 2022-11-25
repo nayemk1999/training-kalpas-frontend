@@ -32,16 +32,8 @@ class SideBar extends Component {
       route: "/add-product",
     },
     {
-      name: "Orders",
-      route: "/orders",
-    },
-    {
       name: "Users",
       route: "/users",
-    },
-    {
-      name: "Customers",
-      route: "/customers",
     },
     {
       name: "Setting",
