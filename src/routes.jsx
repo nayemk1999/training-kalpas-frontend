@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Home from "./pages/Home/Home";
+import ProductDetails from "./pages/products/ProductDetails";
 import Products from "./pages/products/Products";
+import UserDetails from "./pages/Users/UserDetails";
 import Users from "./pages/Users/Users";
 
 export default class Routing extends Component {
@@ -13,6 +15,8 @@ export default class Routing extends Component {
           <Route path="/users" component={Users} />
           <Route path="/products" component={Products} />
           <Route path="/add-product" component={Products} />
+          <Route path="/product/:id" component={ProductDetails} />
+          <Route path="/user/:id" component={UserDetails} />
         </Switch>
       </BrowserRouter>
     );

@@ -2,8 +2,11 @@ import React, { Component } from "react";
 import Layout from "../../components/Layout/Layout";
 import CommonTable from "../../components/common/Table";
 import users from "../../dummy-data/users.json";
-import { Query } from "react-apollo";
+import { graphql, Query } from "react-apollo";
 import { get_all_users } from "../../apollo/user/query";
+import { CircularProgress } from "@mui/material";
+import UserTable from "./UserTable";
+
 class Users extends Component {
   constructor(props) {
     super(props);
@@ -55,35 +58,50 @@ class Users extends Component {
       dataIndex: "createAt",
       key: "createAt",
     },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+    },
   ];
+  componentDidMount() {
+    // In this specific case you may want to use `options.pollInterval` instead.
+    this.props.data.startPolling(1000);
+  }
+  componentWillUnmount() {
+    // In this specific case you may want to use `options.pollInterval` instead.
+    this.props.data.stopPolling(1000);
+  }
+
   render() {
+    const { getAllUsers, loading, error, refetch, networkStatus } =
+      this.props.data;
+    if (networkStatus <= 5) {
+      refetch();
+    }
+    // if (loading) {
+    //   return <CircularProgress color="secondary" />;
+    // }
     return (
       <Layout>
-        <Query
-          query={get_all_users}
-          variables={{
-            limit: this.state.limit,
-            page: this.state.page,
-            filter: this.state.filter,
-          }}
-          notifyOnNetworkStatusChange
-        >
-          {({ loading, error, data, refetch, networkStatus }) => {
-            // if (networkStatus === 4) return "Refetching!";
-            if (loading) return null;
-            if (error) return `Error! ${error}`;
-            return (
-              <CommonTable
-                data={data.getAllUsers}
-                column={this.column}
-                title={"Users List"}
-              />
-            );
-          }}
-        </Query>
+        <UserTable
+          data={getAllUsers || []}
+          column={this.column}
+          title={"Users List"}
+          refetch={refetch}
+        />
       </Layout>
     );
   }
 }
 
-export default Users;
+export default graphql(get_all_users, {
+  options: (props) => ({
+    fetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      limit: 10,
+      page: 0,
+    },
+  }),
+})(Users);

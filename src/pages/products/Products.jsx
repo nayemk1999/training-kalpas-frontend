@@ -1,20 +1,15 @@
-import { useQuery } from "@apollo/react-hooks";
 import React, { Component } from "react";
-import { Query } from "react-apollo";
-import { GetAllProducts } from "../../apollo/product/hooks";
+import { graphql } from "react-apollo";
 import { get_all_products } from "../../apollo/product/query";
-import CommonTable from "../../components/common/Table";
 import Layout from "../../components/Layout/Layout";
 import products from "../../dummy-data/products.json";
+import ProductTable from "./ProductTable";
 
 class Products extends Component {
   constructor(props) {
     super(props);
     this.state = {
       products: products,
-      limit: 10,
-      page: 0,
-      filter: "",
     };
   }
   column = [
@@ -75,34 +70,44 @@ class Products extends Component {
     },
   ];
 
+  componentDidMount() {
+    // In this specific case you may want to use `options.pollInterval` instead.
+    this.props.data.startPolling(1000);
+  }
+  componentWillUnmount() {
+    // In this specific case you may want to use `options.pollInterval` instead.
+    this.props.data.stopPolling(1000);
+  }
+
   render() {
+    const { getAllProducts, loading, error, refetch, networkStatus } =
+      this.props.data;
+    if (networkStatus <= 4) {
+      refetch();
+    }
+    // if (loading) {
+    //   return <CircularProgress color="secondary" />;
+    // }
     return (
       <Layout>
-        <Query
-          query={get_all_products}
-          variables={{
-            limit: this.state.limit,
-            page: this.state.page,
-            filter: this.state.filter,
-          }}
-          notifyOnNetworkStatusChange
-        >
-          {({ loading, error, data, refetch, networkStatus }) => {
-            // if (networkStatus === 4) return "Refetching!";
-            if (loading) return null;
-            if (error) return `Error! ${error}`;
-            return (
-              <CommonTable
-                data={data.getAllProducts}
-                column={this.column}
-                title={"Products List"}
-              />
-            );
-          }}
-        </Query>
+        <ProductTable
+          data={getAllProducts || []}
+          column={this.column}
+          title={"Products List"}
+          refetch={refetch}
+        />
       </Layout>
     );
   }
 }
 
-export default Products;
+export default graphql(get_all_products, {
+  options: (props) => ({
+    fetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      limit: 10,
+      page: 0,
+    },
+  }),
+})(Products);

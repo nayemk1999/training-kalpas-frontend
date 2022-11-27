@@ -1,21 +1,18 @@
 import { useQuery } from "@apollo/react-hooks";
 import { get_all_products } from "./query";
 
-export const GetAllProducts = (limit, page, filter) => {
-
-    const { data, loading, error, refetch } = useQuery(get_all_products, {
-      variables: {
-        limit: 10,
-        page: 0,
-        filter: "",
-      },
-    });
-  console.log("result", data, page, filter);
+export const GetAllProducts = (limit, page) => {
+  // const { data, loading, error, refetch } = useQuery(get_all_products, {
+  //   variables: {
+  //     limit: 10,
+  //     page: 0,
+  //     filter: "",
+  //   },
+  // });
+  console.log("return", limit, page);
 
   return {
-    limit,
-    page,
-    filter,
+    limit, page
   };
 };
 

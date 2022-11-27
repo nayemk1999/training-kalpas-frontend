@@ -6,12 +6,15 @@ import reportWebVitals from "./reportWebVitals";
 // import { ApolloProvider } from "@apollo/react-hooks";
 import apolloGraphClient from "./apollo/apolloClient";
 import { ApolloProvider } from "react-apollo";
+import { UserProvider } from "./AuthenticationApp/Context/userContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ApolloProvider client={apolloGraphClient}>
-      <App />
+      <UserProvider>
+        <App />
+      </UserProvider>
     </ApolloProvider>
   </React.StrictMode>
 );

@@ -10,10 +10,10 @@ import { Avatar, Box, Button, Container, Typography } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import { graphql } from "react-apollo";
 import { Link } from "react-router-dom";
-import AddProduct from "../../pages/products/AddProduct";
+import AddProduct from "./AddProduct";
 import { delete_product } from "../../apollo/product/query";
 
-class CommonTable extends Component {
+class ProductTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -129,4 +129,4 @@ class CommonTable extends Component {
     );
   }
 }
-export default graphql(delete_product, { name: "deleteProduct" })(CommonTable);
+export default graphql(delete_product, { name: "deleteProduct" })(ProductTable);

@@ -10,10 +10,12 @@ import { Avatar, Box, Button, Container, Typography } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import { graphql } from "react-apollo";
 import { Link } from "react-router-dom";
-import AddProduct from "../../pages/products/AddProduct";
-import { delete_product } from "../../apollo/product/query";
 
-class CommonTable extends Component {
+import { delete_product } from "../../apollo/product/query";
+import AddUser from "./AddUser";
+import { delete_user } from "../../apollo/user/query";
+
+class UserTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,21 +26,21 @@ class CommonTable extends Component {
     };
   }
 
-  delete_product(id) {
+  delete_user(id) {
     const r = window.confirm("Are you sure you wish to delete this item?");
     if (!r) {
       return;
     }
-    this.props.deleteProduct({
-      variables: { deleteProductId: id },
+    this.props.deleteUser({
+      variables: { deleteUserId: id },
       onCompleted: (data) => {
         console.log("res", data);
       },
       onError: (err) => console.log("err", err),
     });
-    this.props?.refetch();
+    this.props.refetch();
   }
-  addProductModal() {
+  addUserModal() {
     this.setState({
       addModal: true,
     });
@@ -63,7 +65,7 @@ class CommonTable extends Component {
                 <Button
                   variant="contained"
                   color="success"
-                  onClick={() => this.addProductModal(this)}
+                  onClick={() => this.addUserModal(this)}
                 >
                   Add New
                 </Button>
@@ -93,7 +95,7 @@ class CommonTable extends Component {
                             </Avatar>
                           ) : header.key == "action" ? (
                             <Typography sx={{ display: "flex", gap: "5px" }}>
-                              <Link to={`/product/${emp.id}`}>
+                              <Link to={`/user/${emp.id}`}>
                                 <Button variant="contained" color="success">
                                   View
                                 </Button>
@@ -102,7 +104,7 @@ class CommonTable extends Component {
                               <Button
                                 variant="contained"
                                 color="error"
-                                onClick={() => this.delete_product(emp.id)}
+                                onClick={() => this.delete_user(emp.id)}
                               >
                                 Deleted
                               </Button>
@@ -119,7 +121,7 @@ class CommonTable extends Component {
             </TableContainer>
           </Paper>
           {this.state.addModal && (
-            <AddProduct
+            <AddUser
               modal={() => this.closeModal(this)}
               refetch={this.props.refetch}
             />
@@ -129,4 +131,4 @@ class CommonTable extends Component {
     );
   }
 }
-export default graphql(delete_product, { name: "deleteProduct" })(CommonTable);
+export default graphql(delete_user, { name: "deleteUser" })(UserTable);
